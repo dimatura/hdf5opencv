@@ -18,6 +18,7 @@ struct Hdf5DatasetExistsException : public std::exception { };
 struct Hdf5GetDatasetInfoException : public std::exception { };
 struct Hdf5ReadDatasetInfoException : public std::exception { };
 struct Hdf5ReadDatasetException : public std::exception { };
+struct Hdf5MatNotContinuousException : public std::exception { };
 
 void hdf5save(const char * filename,
               const char * dataset_name,

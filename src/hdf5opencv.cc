@@ -8,7 +8,9 @@ void hdf5save(const char * filename,
               const char * dataset_name,
               cv::Mat& dataset, 
               bool overwrite) {
-  assert (dataset.isContinuous() && "not continuous");
+  if (!dataset.isContinuous()) {
+    throw Hdf5MatNotContinuousException();
+  }
   hid_t file_id;
   if (!overwrite && boost::filesystem::exists(filename)) {
     file_id = H5Fopen(filename, H5F_ACC_RDWR, H5P_DEFAULT); 
