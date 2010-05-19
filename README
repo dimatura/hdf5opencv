@@ -1,0 +1,13 @@
+
+hdf5opencv
+----------
+
+Requirements:
+- OpenCV 2.0 or greater
+- Boost filesystem lib 1.38 or greater
+- HDF5 lib 1.6.6 or greater
+
+TODO
+
+Daniel Maturana - dimatura@puc.cl 
+2010
