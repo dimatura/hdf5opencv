@@ -1,0 +1,14 @@
+test.h5
+
+*.o
+
+.sconsign.dblite
+.*.swp
+
+*~
+tags
+
+core
+core.*
+
+cscope.*
