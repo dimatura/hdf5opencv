@@ -16,10 +16,69 @@
 // 
 
 #include "hdf5opencv.hh"
+
 #include <boost/filesystem.hpp>
 
 namespace hdf5opencv
 {
+
+
+hid_t open_or_create(const char *filename, bool overwrite) {
+  // invoke create if overwrite is true OR file does not exist.
+  hid_t file_id;
+  if (overwrite || !boost::filesystem::exists(filename)) {
+    file_id = H5Fcreate(filename, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT); 
+    if (file_id < 0) {
+      std::string error_msg("Error creating ");
+      error_msg += filename;
+      throw Hdf5OpenCVException(error_msg); 
+    }
+    return file_id;
+  } 
+  // Use open, not create. open will fail if file does not exist.
+  file_id = H5Fopen(filename, H5F_ACC_RDWR, H5P_DEFAULT); 
+  if (file_id < 0) {
+    std::string error_msg("Error opening ");
+    error_msg += filename;
+    throw Hdf5OpenCVException(error_msg); 
+  }
+  return file_id;
+}
+
+/**
+ * Save a string buffer. string *must* be null terminated.
+ */
+void hdf5save(const char * filename,
+              const char * dataset_name,
+              const char * strbuf,
+              bool overwrite) {
+  hid_t file_id = open_or_create(filename, overwrite);
+  // TODO error catching for non null terminated strings
+
+  // do it.
+  if (H5LTfind_dataset(file_id, dataset_name)==1) {
+    std::string error_msg("Error: ");
+    error_msg += filename;
+    error_msg += " exists.";
+    throw Hdf5OpenCVException(error_msg); 
+  }
+  herr_t status = H5LTmake_dataset_string(file_id, dataset_name, strbuf);
+  if (status < 0) {
+    std::string error_msg("Error making dataset ");
+    error_msg += dataset_name;
+    throw Hdf5OpenCVException(error_msg); 
+  }
+  // cleanup.
+  status = H5Fclose(file_id);
+  if (status < 0) {
+    std::string error_msg("Error closing ");
+    error_msg += filename;
+    throw Hdf5OpenCVException(error_msg); 
+  }
+}
+
+
+
 
 void hdf5save(const char * filename,
               const char * dataset_name,
@@ -28,23 +87,7 @@ void hdf5save(const char * filename,
   if (!dataset.isContinuous()) {
     throw Hdf5OpenCVException("Matrix is not continuous"); 
   }
-  hid_t file_id;
-  if (!overwrite && boost::filesystem::exists(filename)) {
-    file_id = H5Fopen(filename, H5F_ACC_RDWR, H5P_DEFAULT); 
-    if (file_id < 0) {
-      std::string error_msg("Error opening ");
-      error_msg += filename;
-      throw Hdf5OpenCVException(error_msg); 
-    }
-  } else {
-    file_id = H5Fcreate(filename, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT); 
-    if (file_id < 0) {
-      std::string error_msg("Error creating ");
-      error_msg += filename;
-      throw Hdf5OpenCVException(error_msg); 
-    }
-  }
-
+  hid_t file_id = open_or_create(filename, overwrite);
   // get type 
   hid_t native_dtype = -1;
   switch (dataset.depth()) {
@@ -158,6 +201,43 @@ void hdf5load(const char * filename,
   }
   dataset.create(dims[0], dims[1], cv_dtype);
   status = H5LTread_dataset(file_id, dataset_name, native_dtype, dataset.ptr());
+  if (status < 0) {
+    std::string error_msg("Error reading ");
+    error_msg += dataset_name;
+    throw Hdf5OpenCVException(error_msg); 
+  }
+  status = H5Fclose(file_id);
+  if (status < 0) {
+    std::string error_msg("Error closing ");
+    error_msg += filename;
+    throw Hdf5OpenCVException(error_msg); 
+  }
+}
+
+void hdf5load(const char * filename,
+              const char * dataset_name,
+              char ** strbuf) {
+  // open file.
+  hid_t file_id = H5Fopen (filename, H5F_ACC_RDONLY, H5P_DEFAULT); 
+  if (file_id < 0) {
+    std::string error_msg("Error opening ");
+    error_msg += filename;
+    throw Hdf5OpenCVException(error_msg); 
+  }
+  // get dset info 
+  hsize_t dims[2];
+  size_t type_sz;
+  H5T_class_t dtype;
+  // type_sz has string length (including the final '\0' character)
+  herr_t status = H5LTget_dataset_info(file_id, dataset_name, dims, &dtype, &type_sz);
+  if (status < 0) {
+    std::string error_msg("Error getting dataset ");
+    error_msg += dataset_name;
+    error_msg += " info.";
+    throw Hdf5OpenCVException(error_msg); 
+  }
+  *strbuf = new char[type_sz];
+  status = H5LTread_dataset_string(file_id, dataset_name, *strbuf);
   if (status < 0) {
     std::string error_msg("Error reading ");
     error_msg += dataset_name;

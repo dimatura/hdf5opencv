@@ -77,5 +77,12 @@ int main (int argc, char const* argv[]) {
   std::cout << "\n*** CHAR TEST ***\n";
   test<unsigned char>();
 
+  std::cout << "\n*** string TEST ***\n";
+  const char *strbuf = "hello world blabla";
+  std::cout << "Writing " << strbuf << std::endl;
+  hdf5opencv::hdf5save("test.h5", "/hellostr", strbuf, true);
+  char *outbuf;
+  hdf5opencv::hdf5load("test.h5", "/hellostr", &outbuf);
+  std::cout << "Read " << outbuf << std::endl;
   return 0;
 }

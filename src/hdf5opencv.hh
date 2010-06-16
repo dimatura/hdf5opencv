@@ -39,9 +39,18 @@ void hdf5save(const char * filename,
               cv::Mat& dataset, 
               bool overwrite = false);
 
+void hdf5save(const char * filename,
+              const char * dataset_name,
+              const char * strbuf,
+              bool overwrite = false);
+ 
 void hdf5load(const char * filename,
               const char * dataset_name,
               cv::Mat& dataset);
+
+void hdf5load(const char * filename,
+              const char * dataset_name,
+              char ** strbuf);
 
 } /* hdf5opencv */
 
