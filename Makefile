@@ -10,18 +10,16 @@ LIBS=-lcxcore \
      -lpthread \
      -lboost_filesystem-mt
 
-SRCDIR=src
-
 .PHONY: all
 all: demo
 
 demo: demo.o hdf5opencv.o
 	$(CXX) $^ $(CXXFLAGS) $(LIBS) -o $@
 
-demo.o: $(SRCDIR)/demo.cc
+demo.o: demo.cc
 	$(CXX) $(CXXFLAGS) -c $< 
 
-hdf5opencv.o: $(SRCDIR)/hdf5opencv.cc
+hdf5opencv.o: hdf5opencv.cc
 	$(CXX) $(CXXFLAGS) -c $< 
 
 clean:
