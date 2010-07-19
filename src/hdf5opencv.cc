@@ -251,4 +251,20 @@ void hdf5load(const char * filename,
   }
 }
  
+void hdf5create(const char *filename,
+                bool overwrite) {
+  if (boost::filesystem::exists(filename) && !overwrite) {
+      std::string error_msg("Error: ");
+      error_msg += filename;
+      error_msg += " exists and overwrite is false.";
+      throw Hdf5OpenCVException(error_msg); 
+  }
+  hid_t file_id = H5Fcreate(filename, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT); 
+  if (file_id < 0) {
+    std::string error_msg("Error creating ");
+    error_msg += filename;
+    throw Hdf5OpenCVException(error_msg); 
+  }
+}
+
 } /* hdf5opencv */

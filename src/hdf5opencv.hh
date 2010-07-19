@@ -34,6 +34,9 @@ public:
       std::runtime_error(what_arg) { }
 };
 
+void hdf5create(const char *filename,
+                bool overwrite = false);
+
 void hdf5save(const char * filename,
               const char * dataset_name,
               cv::Mat& dataset, 
