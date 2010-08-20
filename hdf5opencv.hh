@@ -23,7 +23,14 @@
 #include <string>
 
 #include "opencv/cv.h"
+
+#include "hdf5.h"
+
+#if (H5_VERS_MINOR==6)
 #include "H5LT.h"
+#else
+#include "hdf5_hl.h"
+#endif
 
 namespace hdf5opencv
 {

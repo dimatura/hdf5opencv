@@ -57,8 +57,8 @@ void hdf5save(const char * filename,
 
   // do it.
   if (H5LTfind_dataset(file_id, dataset_name)==1) {
-    std::string error_msg("Error: ");
-    error_msg += filename;
+    std::string error_msg("Error: dataset ");
+    error_msg += dataset_name;
     error_msg += " exists.";
     throw Hdf5OpenCVException(error_msg); 
   }
