@@ -9,7 +9,7 @@ Requirements:
 - Boost filesystem library (tested with 1.38) (http://www.boost.org)
 - HDF5 library (tested with 1.6.6) (http://www.hdfgroup.org/HDF5)
 
-TODO: Better docs
+See ``demo.cc`` for an example.
 
 Daniel Maturana - dimatura@puc.cl 
-2010
+2011
