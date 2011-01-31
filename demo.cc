@@ -19,8 +19,6 @@
 #include <boost/filesystem.hpp>
 
 #include "opencv/cv.h"
-#include "H5LT.h"
-
 #include "hdf5opencv.hh"
 
 template <class T> 

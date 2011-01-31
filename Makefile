@@ -1,14 +1,12 @@
 CXX = g++
 CXXFLAGS=-DNDEBUG -O2 -Wall
 
-LIBS=-lcxcore \
-     -lcv \
-     -lhighgui \
-     -lcvaux \
-     -lhdf5_hl \
+LIBS=-lhdf5_hl \
      -lhdf5 \
      -lpthread \
      -lboost_filesystem-mt
+
+LIBS:=$(LIBS) `pkg-config opencv --libs` 
 
 .PHONY: all
 all: demo
