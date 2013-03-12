@@ -4,7 +4,8 @@ CXXFLAGS=-DNDEBUG -O2 -Wall
 LIBS=-lhdf5_hl \
      -lhdf5 \
      -lpthread \
-     -lboost_filesystem-mt
+     -lboost_filesystem-mt \
+     -lboost_system-mt
 
 LIBS:=$(LIBS) `pkg-config opencv --libs` 
 
