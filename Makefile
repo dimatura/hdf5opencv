@@ -8,6 +8,7 @@ LIBS=-lhdf5_hl \
      -lboost_system-mt
 
 LIBS:=$(LIBS) `pkg-config opencv --libs` 
+CXXFLAGS:=$(CXXFLAGS) `pkg-config opencv --cflags`
 
 .PHONY: all
 all: demo
